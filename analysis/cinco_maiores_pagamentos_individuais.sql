@@ -1,0 +1,7 @@
+SELECT dt."ANO / MÊS", df."NOME FAVORECIDO", dp."NOME AÇÃO", ft."VALOR TRANSFERIDO"
+FROM Fato_Transferencias ft
+JOIN Dim_Favorecido df ON ft.ID_FAVORECIDO = df.ID_FAVORECIDO
+JOIN Dim_Programa dp ON ft.ID_PROGRAMA = dp.ID_PROGRAMA
+JOIN Dim_Tempo dt ON dt.ID_TEMPO  = ft.ID_TEMPO
+ORDER BY ft."VALOR TRANSFERIDO" DESC
+LIMIT 5
