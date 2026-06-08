@@ -64,3 +64,32 @@ As consultas SQL na pasta `/analysis` demonstram o poder do modelo construído:
 3.  **Mapeamento dos maiores pagamentos em parcela única:** Extração das 5 maiores transferências em parcela única da série histórica (sem agregações de soma), detalhando o recebedor, a finalidade e a data exata da transação, utilizando a `Fato_Transferencia`, `Dim_Programa`, a `Dim_Tempo` e a `Dim_Favorecido`.
 
 > **Nota sobre a Qualidade dos Dados:** Durante o processo de ETL, foram identificados vários casos de dados incompletos (UF ausente, dentre outros) que foram devidamente tratados com identificadores específicos para sinalizar.
+
+## 🚀 Como Executar
+
+Diferente de pipelines tradicionais que exigem configurações complexas na máquina do avaliador, este projeto foi desenhado para ser executado de forma **100% automatizada na nuvem** utilizando o Google Colab. Não é necessário instalar instâncias de bancos de dados locais.
+
+### Pré-requisitos
+* Uma conta no Google (para utilizar o Google Colab).
+* Ter os arquivos de dados brutos (`.csv`) armazenados no seu Google Drive (no caminho `/MyDrive/trab_rt/Dados_Brutos`). 
+> **Nota de Infraestrutura:** Esta arquitetura híbrida de armazenamento (Código no GitHub + Dados no Google Drive) foi a solução de engenharia adotada para contornar o estouro de cota de banda do *Git LFS (Large File Storage)* do GitHub, viabilizando o processamento de 5.8 milhões de registros.
+
+### Passo 1: Acesso ao Pipeline
+1. Acesse o repositório e abra o notebook principal: [`notebooks/ELT.ipynb`](./notebooks/ELT.ipynb).
+2. Abra este arquivo utilizando a plataforma **Google Colab**.
+3. Autorize a conexão com o seu Google Drive na primeira célula para fornecer os dados brutos ao pipeline.
+
+### Passo 2: Execução Automática (Pipeline ELT)
+No menu superior do Google Colab, clique em **Ambiente de execução > Executar tudo** (ou `Ctrl + F9`). O script realizará o processo *end-to-end* de forma autônoma:
+
+1. **Clone Dinâmico:** Clona este repositório para a máquina virtual do Colab, ignorando o download dos CSVs bloqueados pelo limite do GitHub (`GIT_LFS_SKIP_SMUDGE=1`).
+2. **Setup do Data Warehouse:** Instala e inicializa um servidor PostgreSQL local dentro da própria máquina virtual temporária do Google.
+3. **Fase EL (Extract & Load):** Executa a leitura dos arquivos do Drive via Pandas e realiza a carga bruta em lotes (chunks de 10 mil linhas) para a tabela de *Staging* (`raw_transferencias`) no Postgres, evitando *Out of Memory*.
+4. **Fase T (Transform via dbt):** Configura as credenciais dinamicamente e aciona o motor do **dbt**, executando o `dbt run` para construir e popular o Esquema Estrela diretamente pelo SQL.
+
+### Passo 3: Consultas e Análises
+Ao final da execução do notebook, o *Data Warehouse* estará totalmente populado e modelado. As métricas e respostas analíticas de negócio documentadas no relatório podem ser reproduzidas rodando os arquivos SQL da pasta `/analysis`:
+
+* `cinco_maiores_pagamentos_individuais.sql`
+* `dez_maiores_recipientes.sql`
+* `repasses_para_UFPE.sql`
