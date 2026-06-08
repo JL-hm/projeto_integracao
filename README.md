@@ -55,4 +55,12 @@ projeto_integracao/
 ## Run 🏃
 
 
-## Resultados ✔️
+## Resultados e Insights✔️
+
+As consultas SQL na pasta `/analysis` demonstram o poder do modelo construído:
+
+1.  **Análise de repasses à UFPE no recorte temporal:** Análise do volume de repasses, filtrando especificamente pelos que tinham como destino a UFPE, agrupados pelo par ano/mês, usando a `Fato_Transferencia`, a `Dim_Tempo` e a `Dim_Favorecido`.
+2.  **Distribuição de verba da União a programas distintos:** Agrupamento de registros pelo programa a que se destinava o repasse, ordenando visando listar os 10 maiores recipientes usando a `Fato_Transferencia` e a `Dim_Programa`.
+3.  **Mapeamento dos maiores pagamentos em parcela única:** Extração das 5 maiores transferências em parcela única da série histórica (sem agregações de soma), detalhando o recebedor, a finalidade e a data exata da transação, utilizando a `Fato_Transferencia`, `Dim_Programa`, a `Dim_Tempo` e a `Dim_Favorecido`.
+
+> **Nota sobre a Qualidade dos Dados:** Durante o processo de ETL, foram identificados vários casos de dados incompletos (UF ausente, dentre outros) que foram devidamente tratados com identificadores específicos para sinalizar.
