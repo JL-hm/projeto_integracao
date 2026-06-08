@@ -1,0 +1,12 @@
+name: 'transferencias_elt'
+version: '1.0.0'
+config-version: 2
+profile: 'transferencias_elt'
+model-paths: ["models"]
+clean-targets: ["target", "dbt_packages"]
+models:
+  transferencias_elt:
+    staging:
+      +materialized: view
+    marts:
+      +materialized: table
