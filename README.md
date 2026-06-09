@@ -37,24 +37,29 @@ O Data Warehouse foi estruturado utilizando o modelo *Star Schema*, composto pel
 - **Google Colab & Drive:** Ambiente de execução e armazenamento para os scripts de extração e tratamento inicial.
 - **SQL:** Utilizado para a formulação de consultas analíticas sob medida e estruturação de *queries* diretamente na base de dados final.
 
-## Arvore de Arquivos 🌳
+## Árvore de Arquivos 🌳
 
 ```text
 projeto_integracao/
-├── .gitattributes             # Configuração do Git LFS (Arquivos grandes)
+├── .gitattributes                          # Configuração do Git LFS (Arquivos grandes)
 ├── README.md
-├── analysis/
-│   └── ...                    # Scripts de consultas e análises SQL
-└── notebooks/
-    ├── ETL.ipynb              # Notebook com o pipeline de extração e transformação (Pandas)
-    └── data/                  # Diretório com a base de dados pública unificada
-        ├── 2020/              # Planilhas mensais do ano 2020
-        ├── 2021/              # Planilhas mensais do ano 2021
-        └── 2022/              # Planilhas mensais do ano 2022
+├── analysis/                               # Scripts de consultas e análises analíticas SQL
+│   ├── cinco_maiores_pagamentos_individuais.sql
+│   ├── dez_maiores_recipientes.sql
+│   └── repasses_para_UFPE.sql
+├── notebooks/
+│   ├── data/                               # Diretório com a base de dados segmentada
+│   │   ├── 2020_rt/
+│   │   ├── 2021_rt/
+│   │   └── 2022_rt/
+│   ├── ELT.ipynb                           # Notebook com o pipeline ELT
+│   └── ETL.ipynb                           # Notebook com o pipeline de extração e transformação (Pandas)
+└── transferencias_elt/                     # Projeto estruturado no DBT (Fase ELT)
+    ├── dbt_project.yml                     # Arquivo de configuração principal do DBT
+    └── models/                             # Modelos de transformação SQL
+        ├── marts/                          # Modelagem dimensional final (Star Schema)
+        └── staging/                        # Camada de limpeza e padronização inicial dos dados
 ```
-
-## Run 🏃
-
 
 ## Resultados e Insights✔️
 
