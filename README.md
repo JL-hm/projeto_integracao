@@ -66,9 +66,7 @@ As consultas SQL na pasta `/analysis` demonstram o poder do modelo construído:
 
 > **Nota sobre a Qualidade dos Dados:** Durante o processo de ETL, foram identificados vários casos de dados incompletos (UF ausente, dentre outros) que foram devidamente tratados com identificadores específicos para sinalizar.
 
-## 🚀 Como Executar (ETL && ELT)
-
-### 🚀 Instruções de Execução (ETL)
+## 🚀 Instruções de Execução (ETL)
 
 Este repositório contém o script responsável pelas etapas de **Extração, Transformação e Carga (ETL)** dos dados de Transferências Financeiras do Governo Federal. O código foi desenvolvido para rodar no ambiente Google Colab, enviando os dados tratados diretamente para um Data Warehouse em nuvem (PostgreSQL).
 
