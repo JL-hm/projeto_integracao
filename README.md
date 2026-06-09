@@ -65,31 +65,24 @@ As consultas SQL na pasta `/analysis` demonstram o poder do modelo construído:
 
 > **Nota sobre a Qualidade dos Dados:** Durante o processo de ETL, foram identificados vários casos de dados incompletos (UF ausente, dentre outros) que foram devidamente tratados com identificadores específicos para sinalizar.
 
-## 🚀 Como Executar
+## 🚀 Como Executar (ETL && ELT)
 
-Diferente de pipelines tradicionais que exigem configurações complexas na máquina do avaliador, este projeto foi desenhado para ser executado de forma **100% automatizada na nuvem** utilizando o Google Colab. Não é necessário instalar instâncias de bancos de dados locais.
+### 🚀 Instruções de Execução (ETL)
 
-### Pré-requisitos
-* Uma conta no Google (para utilizar o Google Colab).
-* Ter os arquivos de dados brutos (`.csv`) armazenados no seu Google Drive (no caminho `/MyDrive/trab_rt/Dados_Brutos`). 
-> **Nota de Infraestrutura:** Esta arquitetura híbrida de armazenamento (Código no GitHub + Dados no Google Drive) foi a solução de engenharia adotada para contornar o estouro de cota de banda do *Git LFS (Large File Storage)* do GitHub, viabilizando o processamento de 5.8 milhões de registros.
+Este repositório contém o script responsável pelas etapas de **Extração, Transformação e Carga (ETL)** dos dados de Transferências Financeiras do Governo Federal. O código foi desenvolvido para rodar no ambiente Google Colab, enviando os dados tratados diretamente para um Data Warehouse em nuvem (PostgreSQL).
 
-### Passo 1: Acesso ao Pipeline
-1. Acesse o repositório e abra o notebook principal: [`notebooks/ELT.ipynb`](./notebooks/ELT.ipynb).
-2. Abra este arquivo utilizando a plataforma **Google Colab**.
-3. Autorize a conexão com o seu Google Drive na primeira célula para fornecer os dados brutos ao pipeline.
+#### 📂 Como acessar os Dados Brutos (Atalho no Drive)
+Para facilitar a execução deste notebook e evitar o download pesado de gigabytes de arquivos CSV, os dados brutos foram disponibilizados em nuvem. Siga estes 3 passos simples antes de iniciar:
 
-### Passo 2: Execução Automática (Pipeline ELT)
-No menu superior do Google Colab, clique em **Ambiente de execução > Executar tudo** (ou `Ctrl + F9`). O script realizará o processo *end-to-end* de forma autônoma:
+1. Acesse a pasta raiz do projeto clicando neste link: **[https://drive.google.com/drive/folders/1cqeaA2uAmvNbG1n9OtwtoXbrBhX91T6R?usp=sharing]**
+2. No topo da tela, clique na setinha ao lado do nome da pasta e selecione a opção **"Adicionar atalho ao Google Drive"** (ou *Add shortcut to Drive*).
+3. Escolha a opção **"Meu Drive"** (*My Drive*) e clique em Adicionar.
 
-1. **Clone Dinâmico:** Clona este repositório para a máquina virtual do Colab, ignorando o download dos CSVs bloqueados pelo limite do GitHub (`GIT_LFS_SKIP_SMUDGE=1`).
-2. **Setup do Data Warehouse:** Instala e inicializa um servidor PostgreSQL local dentro da própria máquina virtual temporária do Google.
-3. **Fase EL (Extract & Load):** Executa a leitura dos arquivos do Drive via Pandas e realiza a carga bruta em lotes (chunks de 10 mil linhas) para a tabela de *Staging* (`raw_transferencias`) no Postgres, evitando *Out of Memory*.
-4. **Fase T (Transform via dbt):** Configura as credenciais dinamicamente e aciona o motor do **dbt**, executando o `dbt run` para construir e popular o Esquema Estrela diretamente pelo SQL.
+Feito isso, o Google Colab reconhecerá o atalho automaticamente e extrairá os quase 6 milhões de registros sem consumir a memória local da sua máquina.
 
-### Passo 3: Consultas e Análises
-Ao final da execução do notebook, o *Data Warehouse* estará totalmente populado e modelado. As métricas e respostas analíticas de negócio documentadas no relatório podem ser reproduzidas rodando os arquivos SQL da pasta `/analysis`:
+#### ⚙️ Como Configurar e Rodar o Código no Colab
+* **Passo 1 (Conexão com Drive):** Abra o arquivo do notebook (`ETL.ipynb`) no Google Colab. Ao rodar a primeira célula de código, autorize o Colab a montar o seu Google Drive.
+* **Passo 2 (Credenciais do Banco):** Vá até a última célula de código (fase de Carga/Load). Se for rodar localmente, insira a sua string de conexão (`DATABASE_URL`) apontando para um banco PostgreSQL válido (recomendamos *Neon.tech* ou *Aiven*). *Nota: Por questões de segurança, as senhas foram removidas deste repositório público.*
+* **Passo 3 (Execução):** No menu superior do Colab, clique em **Ambiente de execução > Executar tudo** (ou `Ctrl + F9`).
 
-* `cinco_maiores_pagamentos_individuais.sql`
-* `dez_maiores_recipientes.sql`
-* `repasses_para_UFPE.sql`
+O script fará a unificação dos arquivos, a sanitização textual, o descarte de colunas redundantes e montará a estrutura dimensional (Star Schema), enviando a Tabela Fato e as Dimensões diretamente para o servidor nuvem em lotes (*chunks*).
